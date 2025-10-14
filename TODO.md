@@ -1,2 +1,0 @@
-- [x] Display ASL images for received messages
-- [x] Auto-play TTS for new received messages
