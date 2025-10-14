@@ -23,4 +23,18 @@ router.get("/messages/:username", (req, res) => {
   );
 });
 
+// Get messages between two users
+router.get("/messages", (req, res) => {
+  const { sender, receiver } = req.query;
+  if (!sender || !receiver) return res.status(400).json({ message: "Sender and receiver required" });
+  db.query(
+    "SELECT id, sender, receiver, message, status, created_at FROM messages WHERE (sender=? AND receiver=?) OR (sender=? AND receiver=?) ORDER BY created_at ASC",
+    [sender, receiver, receiver, sender],
+    (err, results) => {
+      if (err) return res.status(500).json({ message: "DB error" });
+      res.json(results);
+    }
+  );
+});
+
 module.exports = router;

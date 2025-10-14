@@ -5,7 +5,9 @@ body {
   padding: 0;
   color: #333;
 }
-
+#asl-output img {
+    vertical-align: middle;
+}
 header {
   background: #fff;
   padding: 20px;
@@ -52,10 +54,49 @@ input {
 }
 
 .chat-container {
-  max-width: 600px;
+  max-width: 1200px;
   margin: 20px auto;
   display: flex;
   flex-direction: column;
+}
+
+.main-content {
+  display: flex;
+  height: 80vh;
+}
+
+.sidebar {
+  width: 30%;
+  background: #f0f0f0;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+}
+
+#usersList {
+  list-style: none;
+  padding: 0;
+}
+
+#usersList li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+
+#usersList li:hover {
+  background: #e0e0e0;
+}
+
+.chat-section {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
 .chat-box {
