@@ -5,16 +5,22 @@
   <title>Login - Deaf and Dumb Communication Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="login-page">
   <header><h1>Login</h1></header>
   <main class="form-container">
     <form id="loginForm">
       <input type="text" id="loginUsername" placeholder="Username" required>
-      <input type="password" id="loginPassword" placeholder="Password" required>
+      <div class="password-container">
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <span id="togglePassword" class="eye-icon">👁️</span>
+      </div>
       <button type="submit">Login</button>
     </form>
     <p>Don't have an account? <a href="register.html">Register</a></p>
   </main>
+  <script>
+  window.API_URL = "https://killian-apographical-fatimah.ngrok-free.dev/api";
+</script>
   <script src="app.js"></script>
 </body>
 </html>

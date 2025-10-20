@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chat - Chat App</title>
+  <title>Chat - Deaf & Dumb Portal</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Socket.IO client -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
   <div class="chat-container">
     <header>
-      <h2>💬 Chat App</h2>
-      <button id="logoutBtn">Logout</button>
+      <h2 id="headerTitle">💬 Deaf & Dumb Portal</h2>
+      <div id="userInfo">
+        <span id="currentUser"></span>
+        <button id="logoutBtn" class="btn-logout">Logout</button>
+      </div>
     </header>
 
     <div class="main-content">
@@ -20,23 +25,36 @@
       </aside>
 
       <section class="chat-section">
-        <div id="selectedUserDisplay">Select a user from the sidebar to start chatting</div>
-
+        <div id="selectedUserDisplay" class="chat-header">Select a user to start chatting</div>
+        <div id="typingIndicator" class="typing-indicator"></div>
         <div class="chat-box" id="chatBox"></div>
 
-        <form id="chatForm">
-          <input type="text" id="chatMessage" placeholder="Type a message" required>
+        <form id="chatForm" class="chat-input-form">
+          <div class="input-controls">
+            <input type="text" id="chatMessage" placeholder="Type a message" required>
+            <div class="speech-controls">
+              <button id="startSpeechBtn" title="Start Speech Input" type="button">🎤</button>
+              <button id="stopSpeechBtn" title="Stop Speech Input" disabled type="button">⏹️</button>
+              <button id="aslBtn" title="Show ASL Images" type="button">🤟</button>
+            </div>
+          </div>
           <button type="submit">Send</button>
         </form>
-        <div id="asl-output"></div>
-        <div class="speech-controls">
-          <button id="startSpeechBtn" title="Start Speech Input">🎤</button>
-          <button id="stopSpeechBtn" title="Stop Speech Input" disabled>⏹️</button>
-          <button id="ttsBtn" title="Read Messages Aloud">🔊</button>
-        </div>
+
+
       </section>
     </div>
   </div>
+
+  <!-- Notification sound -->
+  <audio id="notificationSound" src="notification.mp3" preload="auto"></audio>
+
+  <!-- API URL -->
+  <script>
+    window.API_URL = "https://killian-apographical-fatimah.ngrok-free.dev/api";
+    window.SOCKET_URL = window.API_URL.replace('/api','');
+  </script>
+
   <script src="app.js"></script>
 </body>
 </html>

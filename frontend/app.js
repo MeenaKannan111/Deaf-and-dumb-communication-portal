@@ -1,6 +1,5 @@
-
-const API_URL = "http://localhost:5000/api";
-let socket;
+const host = window.location.hostname;
+const API_URL = window.API_URL || "http://localhost:5000/api";
 
 // Register
 const registerForm = document.getElementById("registerForm");
@@ -44,6 +43,19 @@ if (loginForm) {
       alert(data.message);
     }
   });
+
+  // Toggle password visibility
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("loginPassword");
+  if (togglePassword && passwordInput) {
+    togglePassword.addEventListener("click", () => {
+      console.log("Eye icon clicked");
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      togglePassword.textContent = type === "password" ? "👁️" : "🙈";
+      console.log("Password type changed to:", type);
+    });
+  }
 }
 
 // Chat
@@ -52,6 +64,10 @@ if (window.location.pathname.includes("chat.html")) {
   const username = sessionStorage.getItem("username");
   if (!token) window.location.href = "index.html";
 
+  // Display current user in header
+  const currentUserSpan = document.getElementById("currentUser");
+  if (currentUserSpan) currentUserSpan.textContent = username;
+
   const logoutBtn = document.getElementById("logoutBtn");
   logoutBtn.addEventListener("click", () => {
     sessionStorage.clear();
@@ -59,7 +75,7 @@ if (window.location.pathname.includes("chat.html")) {
   });
 
   // Connect Socket.IO
-  socket = io("http://localhost:5000");
+  const socket = io(window.SOCKET_URL || "http://localhost:5000");
   socket.emit("userOnline", username);
 
   const selectedUserDisplay = document.getElementById("selectedUserDisplay");
@@ -70,10 +86,14 @@ if (window.location.pathname.includes("chat.html")) {
   const startSpeechBtn = document.getElementById("startSpeechBtn");
   const stopSpeechBtn = document.getElementById("stopSpeechBtn");
   const ttsBtn = document.getElementById("ttsBtn");
+  const aslBtn = document.getElementById("aslBtn");
 
   let selectedUser = null;
   let recognition = null;
   let readMessages = new Set(); // Track read messages for TTS
+  let messageCounter = 0; // Sequence counter for messages
+  let lastSentSeq = -1; // Sequence of last sent message for ASL filtering
+  let textMode = true; // true for text mode, false for ASL mode
 
   // Load users in sidebar
   fetch(`${API_URL}/chat/users`)
@@ -96,25 +116,11 @@ if (window.location.pathname.includes("chat.html")) {
     chatForm.style.display = 'block';
     chatBox.style.display = 'block';
     readMessages.clear(); // Clear read messages when switching conversations
+    messageCounter = 0; // Reset message counter
+    lastSentSeq = -1; // Reset last sent sequence
     loadMessages();
   }
-    function showASLImages(text) {
-      const container = document.getElementById('asl-output');
-      container.innerHTML = ''; // Clear previous output
 
-      // Convert text to uppercase and loop through each character
-      text.toUpperCase().split('').forEach(char => {
-          if (char >= 'A' && char <= 'Z') {
-              const img = document.createElement('img');
-              img.src = `asl_images/${char}.jfif`; // Corrected extension
-              img.alt = char;
-              img.style.width = '50px'; // Adjust size as needed
-              img.style.margin = '2px';
-              img.onerror = () => img.style.display = 'none'; // Hide if image not found
-              container.appendChild(img);
-          }
-      });
-  }
   // Load messages for selected conversation
   function loadMessages() {
     if (!selectedUser) return;
@@ -131,8 +137,8 @@ if (window.location.pathname.includes("chat.html")) {
     e.preventDefault();
     const msg = chatMessage.value.trim();
     if (!msg || !selectedUser) return;
+    lastSentSeq = messageCounter; // Update last sent sequence
     socket.emit("sendMessage", { sender: username, receiver: selectedUser, message: msg });
-    showASLImages(msg); // Display ASL images for sent message
     chatMessage.value = "";
   });
 
@@ -157,8 +163,43 @@ if (window.location.pathname.includes("chat.html")) {
     }
 
     const time = new Date(msg.created_at).toLocaleTimeString();
-    div.innerHTML = `<strong>${msg.sender}:</strong> ${msg.message} <span>${ticks}</span><br><small>${time}</small>`;
+
+    let messageContent;
+    if (textMode) {
+      messageContent = msg.message;
+    } else {
+      // ASL mode: display images for each letter, try .jpg first then .jfif
+      messageContent = '';
+      msg.message.toUpperCase().split('').forEach(char => {
+        if (char >= 'A' && char <= 'Z') {
+          messageContent += `<img src="asl_images/${char}.jpg" alt="${char}" style="width: 30px; height: 30px; margin: 1px; vertical-align: middle;" onerror="this.src='asl_images/${char}.jfif'">`;
+        }
+      });
+    }
+
+    div.innerHTML = `${messageContent} <span>${ticks}</span><br><small>${time}</small>`;
     div.dataset.msgId = msg.id; // Store message ID for TTS tracking
+    div.dataset.seq = messageCounter++; // Assign sequence number
+    div.dataset.message = msg.message; // Store clean message text
+
+    // Add speaker icon for received messages
+    if (msg.sender !== username) {
+      const speakerIcon = document.createElement("span");
+      speakerIcon.innerHTML = "🔊";
+      speakerIcon.style.cursor = "pointer";
+      speakerIcon.style.marginLeft = "5px";
+      speakerIcon.title = "Read message aloud";
+      speakerIcon.addEventListener("click", () => {
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(msg.message);
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert("Text-to-speech not supported in this browser.");
+        }
+      });
+      div.appendChild(speakerIcon);
+    }
+
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -167,9 +208,8 @@ if (window.location.pathname.includes("chat.html")) {
       readMessages.add(msg.id);
     }
 
-    // For received messages, display ASL images and auto-play TTS if new
+    // For received messages, auto-play TTS if new
     if (msg.sender !== username) {
-      showASLImages(msg.message);
       if (!fromHistory && 'speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(msg.message);
         window.speechSynthesis.speak(utterance);
@@ -230,36 +270,47 @@ if (window.location.pathname.includes("chat.html")) {
   }
 
   // Text-to-Speech
-  ttsBtn.addEventListener("click", () => {
-    const messages = chatBox.querySelectorAll('.received');
-    if (messages.length === 0) return;
-    if ('speechSynthesis' in window) {
-      // Filter messages to only those not read yet
-      const unreadMessages = Array.from(messages).filter(msgDiv => {
-        const msgId = msgDiv.dataset.msgId;
-        return msgId && !readMessages.has(msgId);
-      });
-      if (unreadMessages.length === 0) return;
+  if (ttsBtn) {
+    ttsBtn.addEventListener("click", () => {
+      const messages = chatBox.querySelectorAll('.received');
+      if (messages.length === 0) return;
+      if ('speechSynthesis' in window) {
+        // Filter messages to only those not read yet
+        const unreadMessages = Array.from(messages).filter(msgDiv => {
+          const msgId = msgDiv.dataset.msgId;
+          return msgId && !readMessages.has(msgId);
+        });
+        if (unreadMessages.length === 0) return;
 
-      // Function to speak messages sequentially
-      function speakMessages(index) {
-        if (index >= unreadMessages.length) return;
-        const msgDiv = unreadMessages[index];
-        const msgId = msgDiv.dataset.msgId;
-        const text = msgDiv.textContent;
-        readMessages.add(msgId);
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => {
-          speakMessages(index + 1);
-        };
-        window.speechSynthesis.speak(utterance);
+        // Function to speak messages sequentially
+        function speakMessages(index) {
+          if (index >= unreadMessages.length) return;
+          const msgDiv = unreadMessages[index];
+          const msgId = msgDiv.dataset.msgId;
+          const text = msgDiv.textContent;
+          readMessages.add(msgId);
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.onend = () => {
+            speakMessages(index + 1);
+          };
+          window.speechSynthesis.speak(utterance);
+        }
+
+        speakMessages(0);
+      } else {
+        alert("Text-to-speech not supported in this browser.");
       }
+    });
+  }
 
-      speakMessages(0);
-    } else {
-      alert("Text-to-speech not supported in this browser.");
-    }
-  });
+  // ASL Button
+  if (aslBtn) {
+    aslBtn.addEventListener("click", () => {
+      textMode = !textMode; // Toggle mode
+      // Reload all messages to re-render in new mode
+      loadMessages();
+    });
+  }
 
   // Mark as seen
   chatBox.addEventListener("click", () => {

@@ -4,17 +4,50 @@
   <meta charset="UTF-8">
   <title>Deaf and Dumb Communication Portal</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
 <body>
-  <header>
+  <header class="landing-header">
     <h1>Deaf and Dumb Communication Portal</h1>
+    <nav class="nav-buttons">
+      <button onclick="location.href='login.html'">Login</button>
+      <button onclick="location.href='register.html'">Register</button>
+    </nav>
   </header>
 
-  <main class="home-container">
-    <button onclick="location.href='login.html'">Login</button>
-    <button onclick="location.href='register.html'">Register</button>
-    <button onclick="location.href='about.html'">About Us</button>
-    <button onclick="location.href='users.html'">Users</button>
+  <main>
+    <section class="hero">
+      <h2>Empowering Communication for All</h2>
+      <p>Break barriers with real-time chat, voice, and sign language</p>
+      <button class="cta-button" onclick="location.href='login.html'">Start Communicating</button>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <div class="feature-icon">💬</div>
+        <h3>Real-Time Chat</h3>
+        <p>Instant messaging with message status indicators.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎤</div>
+        <h3>Speech-to-Text & Text-to-Speech</h3>
+        <p>Voice input and audio playback for seamless communication.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🤟</div>
+        <h3>ASL Sign Mode</h3>
+        <p>Toggle to American Sign Language images for visual support.</p>
+      </div>
+    </section>
   </main>
+
+  <footer>
+    <p>&copy; 2025 Deaf and Dumb Communication Portal. <a href="about.html">About Us</a> | <a href="users.html">Users</a></p>
+  </footer>
+   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-HlJDKxhFhP2UKPHz6Yq9c5RcdgZf5mAq3n/0jL5PnVb3w8f2lJ6rLqj6T3Rn0f5p" crossorigin="anonymous"></script>
+
+  <!-- Your app.js -->
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,18 +1,47 @@
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #6dd5ed, #2193b0);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #6dd5ed, #2193b0), url('lovepik-blue-gradient-modern-abstract-background-image_401900049.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   margin: 0;
   padding: 0;
   color: #333;
+  line-height: 1.6;
 }
+
+.login-page, .register-page {
+  background: url('Untitled design.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-page .form-container, .register-page .form-container {
+  margin-left: -600px;
+}
+
 #asl-output img {
     vertical-align: middle;
 }
 header {
   background: #fff;
   padding: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 3px solid #2193b0;
+}
+
+#userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#currentUser {
+  font-weight: bold;
+  color: #2193b0;
 }
 
 header h1 {
@@ -43,6 +72,23 @@ button:hover {
   margin-top: 80px;
 }
 
+.landing-header {
+  position: relative;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 3px solid #2193b0;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
 input {
   display: block;
   width: 250px;
@@ -53,11 +99,46 @@ input {
   font-size: 16px;
 }
 
+.password-container {
+  position: relative;
+  display: inline-block;
+  width: 250px;
+}
+
+.login-page .password-container input, .register-page .password-container input {
+  width: calc(100% - 40px);
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px; 
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+}
+
 .chat-container {
   max-width: 1200px;
   margin: 20px auto;
   display: flex;
   flex-direction: column;
+  background: #e3f2fd;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .main-content {
@@ -97,6 +178,9 @@ input {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  background: #e3f2fd;
+  border-radius: 10px;
+  margin: 10px;
 }
 
 .chat-box {
@@ -107,18 +191,43 @@ input {
   height: 400px;
   overflow-y: auto;
   margin-bottom: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-10px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .sent {
   text-align: right;
   color: green;
   margin: 5px 0;
+  background: #e8f5e8;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 70%;
+  margin-left: auto;
+  animation: bounceIn 0.4s ease-out;
 }
 
 .received {
   text-align: left;
   color: blue;
   margin: 5px 0;
+  background: #e3f2fd;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 70%;
+  animation: bounceIn 0.4s ease-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .users-container {
@@ -154,4 +263,179 @@ input {
 #speechBtn, #signBtn {
   margin-left: 5px;
   background: #ff9800;
+}
+
+/* Landing Page Styles */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  color: #fff;
+}
+
+.hero h2 {
+  font-size: 3em;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+.hero p {
+  font-size: 1.5em;
+  margin-bottom: 40px;
+  font-weight: 200;
+}
+
+.cta-button {
+  background: #fff;
+  color: #2193b0;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.features {
+  display: flex;
+  justify-content: space-around;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+.feature {
+  text-align: center;
+  max-width: 300px;
+  margin: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.feature h3 {
+  color: #2193b0;
+  margin-bottom: 15px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+}
+
+footer a {
+  color: #2193b0;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+.input-controls {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-input-form input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.chat-input-form input:focus {
+  outline: none;
+  border-color: #2193b0;
+  box-shadow: 0 0 5px rgba(33, 147, 176, 0.5);
+}
+
+.speech-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.speech-controls button {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.speech-controls button:hover {
+  background: #e0e0e0;
+  transform: scale(1.1);
+}
+
+.speech-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-input-form button[type="submit"] {
+  background: linear-gradient(135deg, #2193b0, #17637a);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.chat-input-form button[type="submit"]:hover {
+  background: linear-gradient(135deg, #17637a, #0d4a5c);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 2em;
+  }
+
+  .hero p {
+    font-size: 1.2em;
+  }
+
+  .features {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-buttons {
+    position: static;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .landing-header {
+    padding: 10px;
+  }
 }
